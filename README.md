@@ -63,7 +63,7 @@ create_invoices_table(connection)
 
 This script takes a natural language query as input, translates it into an SQL query using OpenAI's GPT, and executes it on the database.
 
-    Run the script:
+Run the script:
 ```
 python translate.py
 ```
