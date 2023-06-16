@@ -39,11 +39,11 @@ OPENAI_API_KEY=your_openai_api_key
 
 This script creates and populates two tables, 'employees' and 'invoices', in the MySQL database with sample data.
 
-    To execute this script, first import create_employees_table and create_invoices_table functions from sql.py into your script.
+To execute this script, first import create_employees_table and create_invoices_table functions from sql.py into your script.
 
-    Establish a connection to your MySQL database.
+Establish a connection to your MySQL database.
 
-    Call create_employees_table and create_invoices_table with your database connection as an argument.
+Call create_employees_table and create_invoices_table with your database connection as an argument.
 
 Example:
 
