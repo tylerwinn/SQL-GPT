@@ -67,7 +67,7 @@ Run the script:
 ```
 python translate.py
 ```
-Enter a natural language query when prompted, such as "Show me all employees born after 1990".
+Enter a natural language query when prompted, such as "Which customers are late on payments?".
 
 The script will translate your query into SQL, execute it, and display the results.
 
