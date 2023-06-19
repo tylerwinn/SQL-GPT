@@ -27,5 +27,20 @@
             {% endfor %}
         </ul>
     {% endif %}
+
+    <!-- Add a section to display database and table information -->
+    <h2 class="result__title">Database Information:</h2>
+    <ul class="result__list">
+        {% for database in databases %}
+            <li>
+                <h3>{{ database }}</h3>
+                <ul>
+                    {% for table in databases[database] %}
+                        <li>{{ table }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

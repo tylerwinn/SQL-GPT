@@ -1,6 +1,8 @@
 import random
 from datetime import datetime, timedelta
 from faker import Faker
+import decimal
+import sql
 
 # Function to create and populate the 'employees' table in the given database connection.
 def create_employees_table(connection):
@@ -91,6 +93,132 @@ def create_invoices_table(connection):
     
     # Closing the cursor.
     cursor.close()
+
+def create_products_table(connection):
+    # Creating a cursor to execute SQL statements.
+    cursor = connection.cursor()
+    
+    # SQL query to create the 'products' table.
+    create_table_query = '''
+        CREATE TABLE IF NOT EXISTS products (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100),
+            price DECIMAL(10, 2),
+            quantity INT,
+            description TEXT,
+            manufacturer VARCHAR(100),
+            category VARCHAR(50),
+            created_at TIMESTAMP,
+            updated_at TIMESTAMP,
+            is_available BOOLEAN,
+            weight DECIMAL(8, 2),
+            length DECIMAL(8, 2),
+            width DECIMAL(8, 2),
+            height DECIMAL(8, 2)
+        )'''
+    
+    # Executing the SQL query to create the 'products' table.
+    cursor.execute(create_table_query)
+    
+    # SQL query to insert test data into the 'products' table.
+    insert_query = '''
+        INSERT INTO products (name, price, quantity, description, manufacturer, category, created_at, updated_at, is_available, weight, length, width, height)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    
+    # Creating a Faker instance to generate random test data.
+    fake = Faker()
+    
+    # Generating test data.
+    test_data = []
+    for _ in range(100):
+        name = fake.word().capitalize()
+        price = decimal.Decimal(random.uniform(10, 1000)).quantize(decimal.Decimal('0.00'))
+        quantity = random.randint(0, 100)
+        description = fake.paragraph(nb_sentences=3)
+        manufacturer = fake.company()
+        category = fake.word().capitalize()
+        created_at = fake.date_time_between(start_date='-2y', end_date='now')
+        updated_at = created_at + timedelta(days=random.randint(0, 365))
+        is_available = random.choice([True, False])
+        weight = decimal.Decimal(random.uniform(0.1, 10)).quantize(decimal.Decimal('0.00'))
+        length = decimal.Decimal(random.uniform(1, 50)).quantize(decimal.Decimal('0.00'))
+        width = decimal.Decimal(random.uniform(1, 50)).quantize(decimal.Decimal('0.00'))
+        height = decimal.Decimal(random.uniform(1, 50)).quantize(decimal.Decimal('0.00'))
+        
+        test_data.append((name, price, quantity, description, manufacturer, category, created_at, updated_at, is_available, weight, length, width, height))
+    
+    # Inserting test data into the 'products' table.
+    cursor.executemany(insert_query, test_data)
+    
+    # Closing the cursor.
+    cursor.close()
+
+def create_customers_table(connection):
+    # Creating a cursor to execute SQL statements.
+    cursor = connection.cursor()
+    
+    # SQL query to create the 'customers' table.
+    create_table_query = '''
+        CREATE TABLE IF NOT EXISTS customers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(100),
+            phone VARCHAR(50),  -- Increased column length for phone numbers
+            address VARCHAR(200),
+            city VARCHAR(50),
+            country VARCHAR(50),
+            created_at TIMESTAMP,
+            updated_at TIMESTAMP
+        )'''
+    
+    # Executing the SQL query to create the 'customers' table.
+    cursor.execute(create_table_query)
+    
+    # SQL query to insert test data into the 'customers' table.
+    insert_query = '''
+        INSERT INTO customers (name, email, phone, address, city, country, created_at, updated_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'''
+    
+    # Creating a Faker instance to generate random test data.
+    fake = Faker()
+    
+    # Generating test data.
+    test_data = []
+    for _ in range(100):
+        name = fake.name()
+        email = fake.email()
+        phone = fake.phone_number()
+        address = fake.address().replace('\n', ', ')
+        city = fake.city()
+        country = fake.country()
+        created_at = fake.date_time_between(start_date='-2y', end_date='now')
+        updated_at = created_at + timedelta(days=random.randint(0, 365))
+        
+        test_data.append((name, email, phone, address, city, country, created_at, updated_at))
+    
+    # Inserting test data into the 'customers' table.
+    cursor.executemany(insert_query, test_data)
+    
+    # Closing the cursor.
+    cursor.close()
+
+def execute_query(connection, query):
+    # Creating a cursor to execute SQL statements.
+    cursor = connection.cursor()
+    
+    try:
+        # Executing the SQL query.
+        cursor.execute(query)
+        
+        # Fetching all the rows returned by the query.
+        result = cursor.fetchall()
+        
+        # Returning the query result.
+        return result
+    
+    finally:
+        # Closing the cursor.
+        cursor.close()
 
 # Function to get the names of all tables in the database.
 def get_all_table_names(connection):

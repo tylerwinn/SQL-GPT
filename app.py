@@ -69,7 +69,8 @@ def index():
             cursor.close()
             connection.close()
 
-            return render_template('index.html', results=results, sql_query=sql_query)
+            # Pass the schema information to the template
+            return render_template('index.html', results=results, sql_query=sql_query, databases=schema)
 
         except MySQLdb.Error as e:
             error_message = "An error occurred while executing the SQL query. Please try again later or check your query."
@@ -79,9 +80,37 @@ def index():
             error_message = "An error occurred while communicating with the OpenAI API. Please try again later."
             return render_template('index.html', error_message=error_message)
 
-    return render_template('index.html')
+    # Fetch the schema of all tables in the database
+    db_host = os.getenv('DB_HOST')
+    db_username = os.getenv('DB_USERNAME')
+    db_password = os.getenv('DB_PASSWORD')
+    database = os.getenv('DATABASE')
 
+    try:
+        # Establish a connection to the MySQL database
+        connection = MySQLdb.connect(
+            host=db_host,
+            user=db_username,
+            passwd=db_password,
+            db=database,
+            autocommit=True,
+            ssl={
+                "ca": "cert.pem"
+            }
+        )
 
+        # Fetch the schema of all tables in the database
+        schema = sql.get_all_table_schemas(connection)
+
+        # Close the connection
+        connection.close()
+
+        # Pass the schema information to the template
+        return render_template('index.html', databases=schema)
+
+    except MySQLdb.Error as e:
+        error_message = "An error occurred while connecting to the MySQL database. Please check your database credentials."
+        return render_template('index.html', error_message=error_message)
 
 if __name__ == '__main__':
     app.run(debug=True)
