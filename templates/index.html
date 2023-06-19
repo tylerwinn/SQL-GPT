@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Natural Language to SQL</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <form action="/" method="post">
-        <label for="db_host">Database Host:</label><br>
-        <input type="text" id="db_host" name="db_host"><br>
-        <label for="db_username">Database Username:</label><br>
-        <input type="text" id="db_username" name="db_username"><br>
-        <label for="db_password">Database Password:</label><br>
-        <input type="password" id="db_password" name="db_password"><br>
-        <label for="database">Database Name:</label><br>
-        <input type="text" id="database" name="database"><br>
-        <label for="openai_api_key">OpenAI API Key:</label><br>
-        <input type="text" id="openai_api_key" name="openai_api_key"><br>
-        <label for="user_query">Enter Your Query:</label><br>
-        <input type="text" id="user_query" name="user_query"><br><br>
-        <input type="submit" value="Submit">
+    <form action="/" method="post" class="form">
+        <h2 class="form__title">Natural Language to SQL</h2>
+        <div class="form__group">
+            <label for="user_query" class="form__label">Talk to the example database:</label>
+            <input type="text" id="user_query" name="user_query" class="form__input" placeholder="What are the names of customers late on payments?">
+        </div>
+        <input type="submit" value="Submit" class="form__submit">
     </form>
-    {% if results %}
-        <h2>SQL Query:</h2>
-        <pre>{{ sql_query }}</pre>
-        <h2>Results:</h2>
-        <ul>
+    {% if error_message %}
+        <h2 class="error__title">Error:</h2>
+        <p class="error__message">{{ error_message }}</p>
+    {% elif results %}
+        <h2 class="result__title">SQL Query:</h2>
+        <pre class="result__query">{{ sql_query }}</pre>
+        <h2 class="result__title">Results:</h2>
+        <ul class="result__list">
             {% for row in results %}
                 <li>{{ row }}</li>
             {% endfor %}
