@@ -6,41 +6,57 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <form action="/" method="post" class="form">
-        <h2 class="form__title">Natural Language to SQL</h2>
-        <div class="form__group">
-            <label for="user_query" class="form__label">Talk to the example database:</label>
-            <input type="text" id="user_query" name="user_query" class="form__input" placeholder="What are the names of customers late on payments?">
-        </div>
-        <input type="submit" value="Submit" class="form__submit">
-    </form>
-    {% if error_message %}
-        <h2 class="error__title">Error:</h2>
-        <p class="error__message">{{ error_message }}</p>
-    {% elif results %}
-        <h2 class="result__title">SQL Query:</h2>
-        <pre class="result__query">{{ sql_query }}</pre>
-        <h2 class="result__title">Results:</h2>
-        <ul class="result__list">
-            {% for row in results %}
-                <li>{{ row }}</li>
+    <div class="container">
+        <div class="chat-history">
+            {% for message in conversation %}
+                {% if message.role == 'system' %}
+                    <p class="message system">{{ message.content }}</p>
+                {% elif message.role == 'user' %}
+                    <p class="message user">{{ message.content }}</p>
+                {% elif message.role == 'assistant' %}
+                    <p class="message assistant">{{ message.content }}</p>
+                {% endif %}
             {% endfor %}
-        </ul>
-    {% endif %}
+        </div>
 
-    <!-- Add a section to display database and table information -->
-    <h2 class="result__title">Database Information:</h2>
-    <ul class="result__list">
-        {% for database in databases %}
-            <li>
-                <h3>{{ database }}</h3>
-                <ul>
-                    {% for table in databases[database] %}
-                        <li>{{ table }}</li>
+        <div class="main-interface">
+            <form action="/" method="post" class="form">
+                <h2 class="form__title">Natural Language to SQL</h2>
+                <div class="form__group">
+                    <label for="user_query" class="form__label">Talk to the example database:</label>
+                    <input type="text" id="user_query" name="user_query" class="form__input" placeholder="What are the names of customers late on payments?">
+                </div>
+                <input type="submit" value="Submit" class="form__submit">
+            </form>
+
+            {% if error_message %}
+                <h2 class="error__title">Error:</h2>
+                <p class="error__message">{{ error_message }}</p>
+            {% elif results %}
+                <h2 class="result__title">SQL Query:</h2>
+                <pre class="result__query">{{ sql_query }}</pre>
+                <h2 class="result__title">Results:</h2>
+                <ul class="result__list">
+                    {% for row in results %}
+                        <li>{{ row }}</li>
                     {% endfor %}
                 </ul>
-            </li>
-        {% endfor %}
-    </ul>
+            {% endif %}
+
+            <h2 class="result__title">Database Information:</h2>
+            <ul class="result__list">
+                {% for database in databases %}
+                    <li>
+                        <h3>{{ database }}</h3>
+                        <ul>
+                            {% for table in databases[database] %}
+                                <li>{{ table }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
